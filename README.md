@@ -20,22 +20,40 @@ https://www.youtube.com/watch?v=Nv7s-N8ZxQA&ab_channel=AWSOnlineTechTalks
 https://github.com/aws/copilot-cli/issues/1345
 https://aws.amazon.com/blogs/containers/developing-an-application-based-on-multiple-microservices-using-the-aws-copilot-and-aws-fargate/
 
-copilot init --app demo-gateway-client1 \
-            --name demo-gateway-client1-lb \
+copilot init --app demo-gateway-dev \
+            --name demo-gateway \
             --type 'Load Balanced Web Service' \
-            --dockerfile 'E:\Manu\DEV\spring\demo-spring-gateway\demo-gateway-client1\Dockerfile' \
+            --dockerfile '..\demo-spring-gateway\demo-gateway\Dockerfile' \
             --port 8080
 
-copilot env init --app demo-gateway-client1 \
+copilot init --app demo-gateway-dev \
+            --name demo-gateway-client1 \
+            --type 'Backend Service' \
+            --dockerfile '..\demo-spring-gateway\demo-gateway-client1\Dockerfile' \
+            --port 8080
+
+copilot init --app demo-gateway-dev \
+            --name demo-gateway-client2 \
+            --type 'Backend Service' \
+            --dockerfile '..\demo-spring-gateway\demo-gateway-client2\Dockerfile' \
+            --port 8080
+
+copilot env init --app demo-gateway-dev \
             --name dev \
             --profile copilot-user \
             --default-config
 
-copilot deploy
+copilot deploy --app demo-gateway-dev --env dev --name demo-gateway-client1
+copilot deploy --app demo-gateway-dev --env dev --name demo-gateway-client2
+copilot deploy --app demo-gateway-dev --env dev --name demo-gateway
 
 copilot app ls
 copilot app show
+copilot svc logs --app demo-gateway-dev --env dev --name demo-gateway
 
 copilot app delete
 
+https://aws.github.io/copilot-cli/docs/concepts/pipelines/
+https://stackoverflow.com/questions/70396235/aws-copilot-multiple-load-balanced-web-service
+https://medium.com/signiant-engineering/consolidating-aws-load-balancers-using-host-based-routing-212f5949fca7
 https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-cli-tutorial-fargate.html
